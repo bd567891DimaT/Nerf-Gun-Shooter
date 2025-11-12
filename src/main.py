@@ -27,11 +27,11 @@ GPIO.setup(LED_PIN, GPIO.OUT, initial=GPIO.LOW)
 GPIO.setup(EMERGENCY_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
 # -----------------------------
-# Setup camera
+# Setup USB webcam
 # -----------------------------
-cap = cv2.VideoCapture(0)
-cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
-cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
+cap = cv2.VideoCapture(0)  # 0 = first USB webcam
+cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)  # Full HD width
+cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)  # Full HD height
 
 last_shot_time = 0
 
@@ -39,7 +39,7 @@ try:
     while True:
         ret, frame = cap.read()
         if not ret:
-            print("No camera frame")
+            print("No camera frame detected")
             time.sleep(0.5)
             continue
 
@@ -50,24 +50,5 @@ try:
         mask = cv2.inRange(hsv, HSV_LOWER, HSV_UPPER)
         green_pixels = cv2.countNonZero(mask)
 
-        # If enough green is detected and emergency not pressed
+        # Fire solenoid if green detected and emergency not pressed
         if green_pixels > 500 and GPIO.input(EMERGENCY_PIN):
-            now = time.time()
-            if now - last_shot_time >= COOLDOWN_S:
-                print("Green detected! Firing solenoid.")
-                GPIO.output(SOLENOID_PIN, GPIO.HIGH)
-                GPIO.output(LED_PIN, GPIO.HIGH)
-                time.sleep(PULSE_MS / 1000)
-                GPIO.output(SOLENOID_PIN, GPIO.LOW)
-                GPIO.output(LED_PIN, GPIO.LOW)
-                last_shot_time = now
-
-        # Optional: show mask window
-        cv2.imshow("Green Mask", mask)
-        if cv2.waitKey(1) & 0xFF == ord('q'):
-            break
-
-finally:
-    cap.release()
-    cv2.destroyAllWindows()
-    GPIO.cleanup()
