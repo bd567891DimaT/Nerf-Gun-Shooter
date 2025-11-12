@@ -1,0 +1,27 @@
+# -----------------------------
+# Green color detection (HSV)
+# -----------------------------
+# These numbers are the initial guess for your green target.
+# You can adjust them later with a tuner.
+hsv_lower: [40, 50, 50]     # Lower bound of green
+hsv_upper: [80, 255, 255]   # Upper bound of green
+
+# -----------------------------
+# GPIO pins
+# -----------------------------
+solenoid_pin: 17             # BCM pin connected to MOSFET gate for solenoid
+emergency_pin: 27            # BCM pin for emergency stop button
+status_led_pin: 22           # Optional LED to indicate firing
+
+# -----------------------------
+# Timing
+# -----------------------------
+pulse_ms: 150                # How long to fire solenoid (milliseconds)
+cooldown_s: 0.5              # Minimum time between shots (seconds)
+
+# -----------------------------
+# Camera settings
+# -----------------------------
+camera_index: 0              # USB webcam index (0 = first camera)
+frame_width: 1280            # Webcam resolution width
+frame_height: 720            # Webcam resolution height
